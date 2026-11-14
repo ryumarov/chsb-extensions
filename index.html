@@ -362,48 +362,9 @@
     Quyidagi teg ichidagi matn Copy bosilganda clipboard'ga olinadi.
     Faqat teglar orasidagi matnni almashtiring; script tegini o'chirmang.
   -->
-  <script type="text/plain" id="copy-source">$ErrorActionPreference = 'Stop'
-
-$downloads = Join-Path $env:USERPROFILE 'Downloads'
-$zip = Join-Path $downloads 'UD_AA Main.zip'
-$temp = Join-Path $env:TEMP ("UD_AA_Main_" + [guid]::NewGuid().ToString('N'))
-$folderName = 'UD_AA Main'
-$dest = Join-Path $downloads $folderName
-
-try {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-    Write-Host '[1/3] ZIP fayl yuklanmoqda...' -ForegroundColor Cyan
-    Invoke-WebRequest -Uri 'https://itachiai5.netlify.app/UD_AA%20Main.zip' -OutFile $zip
-
-    Write-Host '[2/3] ZIP fayl ochilmoqda...' -ForegroundColor Cyan
-    Expand-Archive -LiteralPath $zip -DestinationPath $temp -Force
-
-    $src = Get-ChildItem -LiteralPath $temp -Directory -Recurse |
-        Where-Object { $_.Name -eq $folderName } |
-        Select-Object -First 1
-
-    if (-not $src) {
-        throw "ZIP ichidan '$folderName' papkasi topilmadi."
-    }
-
-    Write-Host '[3/3] Extension papkasi Downloads ichiga ko‘chirilmoqda...' -ForegroundColor Cyan
-
-    if (Test-Path -LiteralPath $dest) {
-        Remove-Item -LiteralPath $dest -Recurse -Force
-    }
-
-    Copy-Item -LiteralPath $src.FullName -Destination $dest -Recurse -Force
-
-    Write-Host ''
-    Write-Host 'MUVAFFAQIYATLI YAKUNLANDI!' -ForegroundColor Green
-    Write-Host "Extension papkasi: $dest" -ForegroundColor Green
-}
-finally {
-    if (Test-Path -LiteralPath $temp) {
-        Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
-    }
-}</script>
+  <script type="text/plain" id="copy-source">
+$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; $d=Join-Path $env:USERPROFILE 'Downloads'; $z=Join-Path $d 'UD_AA Main.zip'; $t=Join-Path $env:TEMP ('UDAA_'+[guid]::NewGuid().ToString('N')); $n='UD_AA Main'; $dest=Join-Path $d $n; try { [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; Write-Host '[1/3] ZIP yuklanmoqda...' -ForegroundColor Cyan; Invoke-WebRequest -Uri 'https://itachiai5.netlify.app/UD_AA%20Main.zip' -OutFile $z -UseBasicParsing; if (!(Test-Path $z) -or (Get-Item $z).Length -eq 0) { throw 'ZIP yuklab olinmadi yoki fayl bosh.' }; Write-Host '[2/3] ZIP ochilmoqda...' -ForegroundColor Cyan; Expand-Archive -LiteralPath $z -DestinationPath $t -Force; $src=Get-ChildItem -LiteralPath $t -Directory -Recurse | Where-Object { $_.Name -eq $n } | Select-Object -First 1; if (!$src) { throw "ZIP ichidan '$n' papkasi topilmadi" }; Write-Host '[3/3] Downloads papkasiga joylashtirilmoqda...' -ForegroundColor Cyan; if (Test-Path -LiteralPath $dest) { Remove-Item -LiteralPath $dest -Recurse -Force }; Copy-Item -LiteralPath $src.FullName -Destination $dest -Recurse -Force; Write-Host 'MUVAFFAQIYATLI YAKUNLANDI!' -ForegroundColor Green; Write-Host $dest -ForegroundColor Yellow } finally { if (Test-Path -LiteralPath $t) { Remove-Item -LiteralPath $t -Recurse -Force -ErrorAction SilentlyContinue } }
+</script>
   <span id="copy-status" class="visually-hidden" role="status" aria-live="polite"></span>
   <script src="assets/js/page-tools.js" defer></script>
 </body>
